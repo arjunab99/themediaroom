@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Control Room | Media Division</title>
+  <meta name="description" content="Strategic media division: social media content creation, PR management, brand narratives, and audience intelligence." />
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500&family=Inter:wght@300;400;500;600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <style>
+    :root {
+      --background: 43, 33%, 93%;
+      --foreground: 0, 0%, 8%;
+      --card: 43, 33%, 93%;
+      --card-foreground: 0, 0%, 8%;
+      --popover: 43, 33%, 93%;
+      --popover-foreground: 0, 0%, 8%;
+      --primary: 0, 0%, 8%;
+      --primary-foreground: 43, 33%, 93%;
+      --secondary: 43, 25%, 88%;
+      --secondary-foreground: 0, 0%, 8%;
+      --muted: 43, 20%, 85%;
+      --muted-foreground: 0, 0%, 40%;
+      --accent: 43, 25%, 88%;
+      --accent-foreground: 0, 0%, 8%;
+      --destructive: 0, 84.2%, 60.2%;
+      --destructive-foreground: 210, 40%, 98%;
+      --border: 0, 0%, 20%;
+      --input: 0, 0%, 20%;
+      --ring: 0, 0%, 8%;
+      --radius: 0px;
+      --section-dark: 220, 20%, 12%;
+      --section-dark-foreground: 43, 33%, 93%;
+      --warm-accent: 30, 60%, 32%;
+      --warm-accent-foreground: 43, 33%, 93%;
+    }
+
+    .dark {
+      --background: 220, 20%, 10%;
+      --foreground: 43, 33%, 93%;
+      --card: 220, 18%, 14%;
+      --card-foreground: 43, 33%, 93%;
+      --popover: 220, 18%, 14%;
+      --popover-foreground: 43, 33%, 93%;
+      --primary: 43, 33%, 93%;
+      --primary-foreground: 220, 20%, 10%;
+      --secondary: 220, 15%, 18%;
+      --secondary-foreground: 43, 33%, 93%;
+      --muted: 220, 15%, 18%;
+      --muted-foreground: 43, 15%, 65%;
+      --accent: 220, 15%, 18%;
+      --accent-foreground: 43, 33%, 93%;
+      --border: 220, 10%, 25%;
+      --input: 220, 10%, 25%;
+      --ring: 43, 33%, 93%;
+      --section-dark: 220, 25%, 8%;
+      --section-dark-foreground: 43, 33%, 93%;
+      --warm-accent: 30, 60%, 45%;
+      --warm-accent-foreground: 0, 0%, 100%;
+    }
+
+    * { transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease; }
+    body {
+      background-color: hsl(var(--background));
+      color: hsl(var(--foreground));
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      min-height: 100vh;
+    }
+    h1, h2, h3, h4, h5, h6 { font-family: 'Playfair Display', serif; }
+    .font-display-sans { font-family: 'Inter', sans-serif; font-weight: 600; letter-spacing: -0.02em; }
+    .font-mono-custom { font-family: 'DM Mono', monospace; }
+    .border-foreground\/20 { border-color: hsla(var(--foreground), 0.2); }
+    .bg-background { background-color: hsl(var(--background)); }
+    .text-foreground { color: hsl(var(--foreground)); }
+    .text-muted-foreground { color: hsl(var(--muted-foreground)); }
+    .btn-warm {
+      background-color: hsl(var(--warm-accent));
+      color: hsl(var(--warm-accent-foreground));
+      padding: 0.5rem 0.75rem;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 500;
+      transition: opacity 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-warm-outline {
+      border: 1px solid hsl(var(--warm-accent));
+      color: hsl(var(--warm-accent));
+      padding: 0.5rem 0.75rem;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 500;
+      background: transparent;
+      transition: opacity 0.2s;
+      cursor: pointer;
+    }
+    .btn-warm-outline:hover, .btn-warm:hover { opacity: 0.8; }
+    .btn-editorial {
+      background-color: hsl(var(--primary));
+      color: hsl(var(--primary-foreground));
+      padding: 0.75rem 1.5rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 500;
+      transition: opacity 0.2s;
+      cursor: pointer;
+    }
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0,0,0,0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    .modal-overlay.active { opacity: 1; visibility: visible; }
+    .modal-content {
+      background-color: hsl(var(--background));
+      color: hsl(var(--foreground));
+      max-width: 700px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      border: 2px solid hsl(var(--foreground));
+      padding: 2rem;
+      position: relative;
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+    }
+    .modal-overlay.active .modal-content { transform: scale(1); }
+    .modal-close {
+      position: absolute;
+      top: 1rem; right: 1rem;
+      background: transparent;
+      border: 1px solid hsl(var(--foreground));
+      width: 2rem; height: 2rem;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    .animate-marquee { animation: marquee 30s linear infinite; }
+    .animate-marquee:hover { animation-play-state: paused; }
+    
+    /* SLIDING BANNER */
+    .slider-container {
+      position: relative;
+      width: 100%;
+      max-width: 1920px;
+      margin: 0 auto;
+      overflow: hidden;
+      background: hsl(var(--foreground));
+      color: hsl(var(--background));
+      padding: 40px 0;
+      min-height: 500px;
+      display: flex;
+      align-items: center;
+    }
+    .slider-track {
+      display: flex;
+      width: calc(450px * 26);
+      animation: slideScroll 50s linear infinite;
+      align-items: center;
+    }
+    .slider-slide {
+      width: 450px;
+      flex-shrink: 0;
+      text-align: center;
+      padding: 0 15px;
+    }
+    .slider-slide a {
+      display: block;
+      text-decoration: none;
+      transition: transform 0.3s ease;
+    }
+    .slider-slide a:hover {
+      transform: scale(1.02);
+    }
+    .slide-img {
+      width: 100%;
+      max-width: 420px;
+      height: auto;
+      max-height: 350px;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    @keyframes slideScroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(calc(-450px * 13)); }
+    }
+    .slider-container:hover .slider-track {
+      animation-play-state: paused;
+    }
+    
+    .media-service-card {
+      border: 1px solid hsla(var(--foreground), 0.2);
+      padding: 1.5rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .media-service-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    }
+    .alliance-logo-img {
+      max-height: 48px;
+      width: auto;
+      margin: 0 1rem;
+      filter: grayscale(20%);
+      opacity: 0.9;
+      transition: all 0.2s ease;
+    }
+    .alliance-logo-img:hover {
+      filter: grayscale(0%);
+      opacity: 1;
+    }
+    .packages-scroll-container {
+      overflow-x: auto;
+      scrollbar-width: thin;
+      scrollbar-color: hsl(var(--foreground)) hsl(var(--background));
+      padding-bottom: 1rem;
+    }
+    .packages-scroll-container::-webkit-scrollbar {
+      height: 6px;
+    }
+    .packages-scroll-container::-webkit-scrollbar-track {
+      background: hsl(var(--background));
+      border-radius: 0;
+    }
+    .packages-scroll-container::-webkit-scrollbar-thumb {
+      background-color: hsl(var(--foreground));
+      border-radius: 0;
+    }
+    .packages-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(280px, 320px));
+      gap: 1rem;
+    }
+    @media (min-width: 768px) {
+      .packages-grid {
+        gap: 1.5rem;
+      }
+    }
+    .clickable-contact { cursor: pointer; transition: opacity 0.2s; display: inline-block; }
+    .clickable-contact:hover { opacity: 0.7; text-decoration: underline; }
+  </style>
+</head>
+<body class="bg-background text-foreground">
+  <div class="min-h-screen">
+    <!-- Modal -->
+    <div id="modal-overlay" class="modal-overlay">
+      <div class="modal-content">
+        <button class="modal-close" id="modal-close">×</button>
+        <div id="modal-body"></div>
+      </div>
+    </div>
+
+    <!-- Header -->
+<div class="w-full border-b border-foreground/20">
+  <div class="py-2 px-4 md:px-8 border-b border-foreground/20">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="w-1/3 text-left flex items-center gap-2">
+        <span class="font-mono-custom text-[10px] tracking-widest uppercase text-muted-foreground">EST. 2024</span>
+        <a href="https://thecontrolroom.solutions/" target="_blank" class="text-[9px] py-1 px-2 font-medium uppercase tracking-wide transition-opacity hover:opacity-80 whitespace-nowrap" style="background-color: #d70000; color: white;">Tech Side</a>
+      </div>
+      <div class="w-1/3 text-center">
+        <span class="font-display-sans text-sm md:text-base tracking-wide uppercase text-foreground">Media Intelligence</span>
+      </div>
+      <div class="w-1/3 text-right">
+        <span id="live-clock" class="font-mono-custom text-[10px] tracking-widest uppercase text-foreground whitespace-nowrap">TODAY: WEDNESDAY, MAY 6, 2026 AT 03:31:35 PM GMT+5:30</span>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    <!-- Top heading -->
+    <div class="text-center py-8 md:py-12 border-b border-foreground/20">
+      <h1 class="font-display-sans text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight uppercase">
+        The <span style="color: #d70000;">Media</span> Room
+      </h1>
+      <p class="font-mono-custom text-xs tracking-wide mt-4 text-muted-foreground">Content • Public Relations • Personal Brand</p>
+    </div>
+
+    <!-- Contact bar -->
+    <div class="border-b border-foreground/20 py-3 px-4 md:px-8">
+      <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-2 text-xs font-mono-custom tracking-wide">
+        <span>media@thecontrolroom.solutions</span>
+        <span>+91 9082638041</span>
+      </div>
+    </div>
+
+    <!-- INDEX + Appointment + Case Studies -->
+    <div class="border-b border-foreground/20 py-4 px-4 md:px-8">
+      <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+        <div class="text-center md:text-left">
+          <h3 class="font-display-sans text-lg font-bold mb-2">INDEX</h3>
+          <div class="font-mono-custom text-xs space-y-1 text-muted-foreground">
+            <p><a href="#packages-section" class="hover:text-foreground transition-colors">• PACKAGES</a></p>
+          </div>
+        </div>
+        <div class="flex flex-col items-center justify-center text-center">
+          <h3 class="font-display-sans text-lg font-bold mb-2">Book Your Appointment</h3>
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSdyLGomKaYpmfrt3pY4Cb0TrYrc80M3BqVGPmBfI1Qh-VkifA/viewform?usp=dialog" target="_blank" class="inline-block text-xs py-2 px-6 font-medium uppercase tracking-wide transition-opacity hover:opacity-80" style="background-color: #d70000; color: white;">Schedule Consultation</a>
+        </div>
+        <div class="text-center md:text-right">
+          <h3 class="font-display-sans text-lg font-bold mb-2">CASE STUDIES</h3>
+          <div class="font-mono-custom text-xs space-y-1 text-muted-foreground">
+            <p><a href="/archives.html?category=MEDIA" class="hover:text-foreground transition-colors">• OUR WORK</a></p>
+            <p><a href="how-we-work.html" class="hover:text-foreground transition-colors">• OUR METHOD</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDING BANNER -->
+    <div class="slider-container w-full border-b border-foreground/20">
+      <div class="slider-track">
+        <!-- BANNER 1 -->
+        <div class="slider-slide">
+          <a href="https://www.instagram.com/reel/C8uBoaWSIt4/?igsh=YWJocHVxMTZ5YzRv" target="_blank">
+            <img src="../assets/Banner/1.png" alt="Banner 1" class="slide-img">
+          </a>
+        </div>
+        <div class="slider-slide">
+          <a href="https://www.instagram.com/reel/C5IE3bStaYO/?igsh=c3RnMGUyOXZjZXVh" target="_blank">
+            <img src="../assets/Banner/2.png" alt="Banner 2" class="slide-img">
+          </a>
+        </div>
+        <div class="slider-slide">
+          <a href="https://www.instagram.com/reel/DI-95rogP4y/?igsh=MTBidWI2b2M5enVldQ%3D%3D" target="_blank">
+            <img src="../assets/Banner/3.png" alt="Banner 3" class="slide-img">
+          </a>
+        </div>
+        <div class="slider-slide">
+          <a href="https://www.youtube.com/watch?v=ZeaCn5x4eNc" target="_blank">
+            <img src="../assets/Banner/4.png" alt="Banner 4" class="slide-img">
+          </a>
+        </div>
+        <div class="slider-slide">
+          <a href="https://www.youtube.com/watch?v=vpB5WZox4yc" target="_blank">
+            <img src="../assets/Banner/5.png" alt="Banner 5" class="slide-img">
+          </a>
+        </div>
+        <div class="slider-slide">
+          <a href="https://www.youtube.com/watch?v=ZJq7rPGpeJ4" target="_blank">
+            <img src="../assets/Banner/6.png" alt="Banner 6" class="slide-img">
+          </a>
+        </div>
+        <div class="slider-slide">
+          <a href="https://www.youtube.com/watch?v=m-BjMXl3u-Q" target="_blank">
+            <img src="../assets/Banner/7.png" alt="Banner 7" class="slide-img">
+          </a>
+        </div>
+        <div class="slider-slide">
+          <a href="https://www.youtube.com/watch?v=MvQ0oRZMGZE" target="_blank">
+            <img src="../assets/Banner/8.png" alt="Banner 8" class="slide-img">
+          </a>
+        </div>
+        <div class="slider-slide">
+          <a href="https://yourwebsite.com/page9" target="_blank">
+            <img src="../assets/Banner/9.png" alt="Banner 9" class="slide-img">
+          </a>
+        </div>
+        <div class="slider-slide">
+          <a href="https://yourwebsite.com/page10" target="_blank">
+            <img src="../assets/Banner/10.png" alt="Banner 10" class="slide-img">
+          </a>
+        </div>
+        <div class="slider-slide">
+          <a href="https://www.youtube.com/watch?v=36MZYI1Ti58" target="_blank">
+            <img src="../assets/Banner/11.png" alt="Banner 11" class="slide-img">
+          </a>
+        </div>
+        <div class="slider-slide">
+          <a href="https://yourwebsite.com/page12" target="_blank">
+            <img src="../assets/Banner/12.png" alt="Banner 12" class="slide-img">
+          </a>
+        </div>
+        <div class="slider-slide">
+          <a href="https://yourwebsite.com/page13" target="_blank">
+            <img src="../assets/Banner/13.png" alt="Banner 13" class="slide-img">
+          </a>
+        </div>
+        <!-- DUPLICATE SET FOR SEAMLESS LOOP -->
+        <div class="slider-slide">
+          <a href="https://www.instagram.com/reel/C8uBoaWSIt4/?igsh=YWJocHVxMTZ5YzRv" target="_blank">
+            <img src="../assets/Banner/1.png" alt="Banner 1" class="slide-img">
+          </a>
+        </div>
+        <div class="slider-slide">
+          <a href="https://www.instagram.com/reel/C5IE3bStaYO/?igsh=c3RnMGUyOXZjZXVh" target="_blank">
+            <img src="../assets/Banner/2.png" alt="Banner 2" class="slide-img">
+          </a>
+        </div>
+        <div class="slider-slide">
+          <a href="https://www.instagram.com/reel/DI-95rogP4y/?igsh=MTBidWI2b2M5enVldQ%3D%3D" target="_blank">
+            <img src="../assets/Banner/3.png" alt="Banner 3" class="slide-img">
+          </a>
+        </div>
+        <div class="slider-slide">
+          <a href="https://www.youtube.com/watch?v=ZeaCn5x4eNc" target="_blank">
+            <img src="../assets/Banner/4.png" alt="Banner 4" class="slide-img">
+          </a>
+        </div>
+        <div class="slider-slide">
+          <a href="https://www.youtube.com/watch?v=vpB5WZox4yc" target="_blank">
+            <img src="../assets/Banner/5.png" alt="Banner 5" class="slide-img">
+          </a>
+        </div>
+        <div class="slider-slide">
+          <a href="https://www.youtube.com/watch?v=ZJq7rPGpeJ4" target="_blank">
+            <img src="../assets/Banner/6.png" alt="Banner 6" class="slide-img">
+          </a>
+        </div>
+        <div class="slider-slide">
+          <a href="https://www.youtube.com/watch?v=m-BjMXl3u-Q" target="_blank">
+            <img src="../assets/Banner/7.png" alt="Banner 7" class="slide-img">
+          </a>
+        </div>
+        <div class="slider-slide">
+          <a href="https://www.youtube.com/watch?v=MvQ0oRZMGZE" target="_blank">
+            <img src="../assets/Banner/8.png" alt="Banner 8" class="slide-img">
+          </a>
+        </div>
+        <div class="slider-slide">
+          <a href="https://yourwebsite.com/page9" target="_blank">
+            <img src="../assets/Banner/9.png" alt="Banner 9" class="slide-img">
+          </a>
+        </div>
+        <div class="slider-slide">
+          <a href="https://yourwebsite.com/page10" target="_blank">
+            <img src="../assets/Banner/10.png" alt="Banner 10" class="slide-img">
+          </a>
+        </div>
+        <div class="slider-slide">
+          <a href="https://www.youtube.com/watch?v=36MZYI1Ti58" target="_blank">
+            <img src="../assets/Banner/11.png" alt="Banner 11" class="slide-img">
+          </a>
+        </div>
+        <div class="slider-slide">
+          <a href="https://yourwebsite.com/page12" target="_blank">
+            <img src="../assets/Banner/12.png" alt="Banner 12" class="slide-img">
+          </a>
+        </div>
+        <div class="slider-slide">
+          <a href="https://yourwebsite.com/page13" target="_blank">
+            <img src="../assets/Banner/13.png" alt="Banner 13" class="slide-img">
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- PACKAGES SECTION -->
+    <div id="packages-section" class="max-w-7xl mx-auto px-4 md:px-8 py-8 border-t border-foreground/20">
+      <h2 class="font-display-sans text-3xl md:text-4xl font-bold text-center mb-4">Media Packages</h2>
+      <p class="text-center text-xs font-mono-custom text-muted-foreground mb-8">← Scroll to explore →</p>
+      <div class="packages-scroll-container">
+        <div class="packages-grid" id="media-packages-grid">
+          <div class="border border-foreground/20 p-4 flex flex-col bg-background">
+            <h4 class="font-display-sans font-bold text-lg mb-2">Social Media Management</h4>
+            <div class="text-xs space-y-2 flex-1">
+              <p><span class="font-mono-custom text-[9px] uppercase font-semibold">Scope:</span> Full feed management, daily content, engagement, analytics.</p>
+              <p><span class="font-mono-custom text-[9px] uppercase font-semibold">Output:</span> 15–20 posts/month + stories + community management.</p>
+              <ul class="list-disc pl-4 text-muted-foreground"><li>Consistent brand voice</li><li>Growth analytics</li><li>Monthly strategy report</li></ul>
+            </div>
+            <button class="view-media-case mt-4 text-[9px] font-medium uppercase tracking-wide py-2 px-3 rounded-none" style="background-color: #d70000; color: white; border: none;" data-media="social-mgmt">View Details</button>
+          </div>
+          <div class="border border-foreground/20 p-4 flex flex-col">
+            <h4 class="font-display-sans font-bold text-lg mb-2">Content Studio (Video + Graphics)</h4>
+            <div class="text-xs space-y-2 flex-1">
+              <p><span class="font-mono-custom text-[9px] uppercase font-semibold">Scope:</span> High-end short-form videos, carousels, motion graphics.</p>
+              <p><span class="font-mono-custom text-[9px] uppercase font-semibold">Deliverables:</span> 8–12 unique video assets/month + static designs.</p>
+              <ul class="list-disc pl-4 text-muted-foreground"><li>Script-to-screen production</li><li>Trend jacking</li><li>Post-production editing</li></ul>
+            </div>
+            <button class="view-media-case mt-4 text-[9px] font-medium uppercase tracking-wide py-2 px-3 rounded-none" style="background-color: #d70000; color: white; border: none;" data-media="content-studio">View Details</button>
+          </div>
+          <div class="border border-foreground/20 p-4 flex flex-col">
+            <h4 class="font-display-sans font-bold text-lg mb-2">PR Retainer (Earned Media)</h4>
+            <div class="text-xs space-y-2 flex-1">
+              <p><span class="font-mono-custom text-[9px] uppercase font-semibold">Scope:</span> Press placement, media monitoring, byline articles.</p>
+              <p><span class="font-mono-custom text-[9px] uppercase font-semibold">Output:</span> 4–6 media placements/month + crisis preparedness.</p>
+              <ul class="list-disc pl-4 text-muted-foreground"><li>Journalist database access</li><li>Reputation tracking</li><li>Monthly coverage report</li></ul>
+            </div>
+            <button class="view-media-case mt-4 text-[9px] font-medium uppercase tracking-wide py-2 px-3 rounded-none" style="background-color: #d70000; color: white; border: none;" data-media="pr-retainer">View Details</button>
+          </div>
+          <div class="border border-foreground/20 p-4 flex flex-col">
+            <h4 class="font-display-sans font-bold text-lg mb-2">Influencer & Creator Campaigns</h4>
+            <div class="text-xs space-y-2 flex-1">
+              <p><span class="font-mono-custom text-[9px] uppercase font-semibold">Scope:</span> End-to-end influencer identification, negotiation, briefs, tracking.</p>
+              <p><span class="font-mono-custom text-[9px] uppercase font-semibold">Key focus:</span> Micro & macro creators, authentic UGC amplification.</p>
+              <ul class="list-disc pl-4 text-muted-foreground"><li>Campaign performance dashboards</li><li>Contract & compliance</li><li>Creative asset rights</li></ul>
+            </div>
+            <button class="view-media-case mt-4 text-[9px] font-medium uppercase tracking-wide py-2 px-3 rounded-none" style="background-color: #d70000; color: white; border: none;" data-media="influencer">View Details</button>
+          </div>
+          <div class="border border-foreground/20 p-4 flex flex-col">
+            <h4 class="font-display-sans font-bold text-lg mb-2">Crisis Comms & Monitoring</h4>
+            <div class="text-xs space-y-2 flex-1">
+              <p><span class="font-mono-custom text-[9px] uppercase font-semibold">Scope:</span> Real-time social listening, risk assessment, response playbooks.</p>
+              <p><span class="font-mono-custom text-[9px] uppercase font-semibold">Includes:</span> 24/7 alert system + media training for spokespersons.</p>
+              <ul class="list-disc pl-4 text-muted-foreground"><li>Sentiment tracking</li><li>Rapid response drafts</li><li>Post-crisis audit</li></ul>
+            </div>
+            <button class="view-media-case mt-4 text-[9px] font-medium uppercase tracking-wide py-2 px-3 rounded-none" style="background-color: #d70000; color: white; border: none;" data-media="crisis-comms">View Details</button>
+          </div>
+          <div class="border border-foreground/20 p-4 flex flex-col">
+            <h4 class="font-display-sans font-bold text-lg mb-2">Brand Narrative & Ghostwriting</h4>
+            <div class="text-xs space-y-2 flex-1">
+              <p><span class="font-mono-custom text-[9px] uppercase font-semibold">Scope:</span> LinkedIn thought leadership, executive op-eds, newsletter architecture.</p>
+              <p><span class="font-mono-custom text-[9px] uppercase font-semibold">Deliverables:</span> 4–6 long-form articles/month + speechwriting.</p>
+              <ul class="list-disc pl-4 text-muted-foreground"><li>Voice development</li><li>Authority building</li><li>Editorial calendar</li></ul>
+            </div>
+            <button class="view-media-case mt-4 text-[9px] font-medium uppercase tracking-wide py-2 px-3 rounded-none" style="background-color: #d70000; color: white; border: none;" data-media="ghostwriting">View Details</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<!-- Alliance Marquee with actual images from assets/logos (1.png - 14.png) -->
+<section class="w-full border-y border-foreground/20 py-12 px-4 overflow-hidden my-8">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex items-center gap-4 mb-6"><div class="flex-1 h-px bg-foreground/20"></div><h2 class="font-display-sans text-2xl whitespace-nowrap">Our Alliance's</h2><div class="flex-1 h-px bg-foreground/20"></div></div>
+    <div class="overflow-hidden">
+      <div class="flex w-max animate-marquee items-center" id="alliance-logo-container">
+        <!-- JavaScript will populate logos for 1.png to 14.png from assets/logos -->
+      </div>
+    </div>
+  </div>
+</section>
+
+    <!-- Classifieds + Submit Inquiry -->
+    <div class="max-w-7xl mx-auto grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-foreground/20 my-12 px-4">
+      <div class="p-6 md:p-10">
+        <h2 class="font-display-sans text-3xl font-bold mb-4">Classifieds</h2>
+        <p class="text-sm font-semibold">Media Pitch Guidelines</p>
+        <p class="text-xs text-muted-foreground mt-2">Submit your story or press release for consideration in our E-Table publication.</p>
+        <a href="hiring.html"><button class="btn-editorial mt-6 text-sm">We Are Hiring</button></a>
+      </div>
+      <div class="p-6 md:p-10">
+        <h2 class="font-display-sans text-3xl font-bold">Submit Inquiry</h2>
+        <p class="font-mono-custom text-[10px] uppercase mt-1">Private & Confidential</p>
+        <p class="font-mono-custom text-[9px] mt-2">Media Relations Desk — Confidential</p>
+        <div class="space-y-3 mt-4">
+          <input type="text" id="inquiryName" placeholder="NAME *" class="w-full bg-transparent border border-foreground/30 p-2 text-xs focus:outline-none focus:border-foreground">
+          <input type="email" id="inquiryEmail" placeholder="EMAIL *" class="w-full bg-transparent border border-foreground/30 p-2 text-xs focus:outline-none focus:border-foreground">
+          <input type="text" id="inquiryContact" placeholder="CONTACT NUMBER" class="w-full bg-transparent border border-foreground/30 p-2 text-xs">
+          <input type="tel" id="inquiryPhone" placeholder="PHONE NUMBER *" class="w-full bg-transparent border border-foreground/30 p-2 text-xs">
+          <button id="submitInquiryBtn" class="btn-editorial w-full">Submit Inquiry</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-foreground/20 py-8 px-4 mt-12">
+      <div class="max-w-7xl mx-auto grid md:grid-cols-4 gap-8">
+        <div><h3 class="font-display-sans font-bold">The Control Room</h3><p class="text-xs text-muted-foreground mt-2">Media division: content & PR systems that shape perception and drive influence.</p></div>
+        <div><h4 class="font-mono-custom text-[10px] uppercase font-semibold">Navigation</h4><ul class="text-xs space-y-1 mt-2"><li><a href="#media-services" class="hover:underline">Services</a></li><li><a href="#packages-section" class="hover:underline">Packages</a></li><li><a href="hiring.html" class="hover:underline">Hiring</a></li><li><a href="archives.html" class="hover:underline">Archives</a></li></ul></div>
+        <div><h4 class="font-mono-custom text-[10px] uppercase font-semibold">Offerings</h4><ul class="text-xs space-y-1 mt-2"><li><a href="#" class="hover:underline">Content Creation</a></li><li><a href="#" class="hover:underline">PR & Media Outreach</a></li><li><a href="#" class="hover:underline">Influencer Campaigns</a></li><li><a href="#" class="hover:underline">Crisis Management</a></li></ul></div>
+        <div><h4 class="font-mono-custom text-[10px] uppercase font-semibold">Contact</h4><div class="text-xs mt-2 space-y-1"><a href="mailto:media@thecontrolroom.solutions" class="clickable-contact font-mono-custom block hover:opacity-70">media@thecontrolroom.solutions</a><a href="tel:+919082638041" class="clickable-contact font-mono-custom block hover:opacity-70">+91 9082638041</a></div></div>
+      </div>
+      <div class="text-center text-[10px] font-mono-custom mt-8">© 2027 THE CONTROL ROOM — MEDIA DIVISION. ALL RIGHTS RESERVED.</div>
+    </footer>
+  </div>
+
+<script>
+    function updateClock() {
+      const now = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true, timeZoneName: 'short' };
+      const clockSpan = document.getElementById('live-clock');
+      if (clockSpan) clockSpan.innerHTML = `TODAY: ${now.toLocaleString('en-US', options).toUpperCase()}`;
+    }
+    updateClock(); setInterval(updateClock, 1000);
+
+    const mediaDetails = {
+      'social-mgmt': { title: 'Social Media Management', image: 'https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=600&auto=format', content: '<p class="text-sm mb-3">Full-service social media management.</p><ul class="list-disc pl-5 text-sm"><li>Organic growth strategy</li><li>Consistent daily posting</li><li>Monthly performance decks</li></ul>' },
+      'content-studio': { title: 'Content Studio', image: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=600&auto=format', content: '<p class="text-sm mb-3">In-house creative production.</p>' },
+      'pr-retainer': { title: 'PR Retainer', image: 'https://images.unsplash.com/photo-1586339949216-35c2747cc36d?w=600&auto=format', content: '<p>Strategic media relations.</p>' },
+      'influencer': { title: 'Influencer Campaigns', image: 'https://images.unsplash.com/photo-1611162618077-c39a2ec055f0?w=600&auto=format', content: '<p>Creator partnerships.</p>' },
+      'crisis-comms': { title: 'Crisis Communication', image: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&auto=format', content: '<p>Reputation defense.</p>' },
+      'ghostwriting': { title: 'Brand Narrative', image: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&auto=format', content: '<p>Executive positioning.</p>' }
+    };
+    
+    const modalOverlay = document.getElementById('modal-overlay');
+    const modalBody = document.getElementById('modal-body');
+    const modalClose = document.getElementById('modal-close');
+    function openMediaModal(key) {
+      const data = mediaDetails[key];
+      if (data) {
+        modalBody.innerHTML = `<img src="${data.image}" class="mb-4 w-full rounded"><h2 class="font-display-sans text-2xl mb-4">${data.title}</h2>${data.content}`;
+        modalOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+    function closeModal() { modalOverlay.classList.remove('active'); document.body.style.overflow = ''; }
+    modalClose?.addEventListener('click', closeModal);
+    modalOverlay?.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
+    document.querySelectorAll('.view-media-case').forEach(btn => { btn.addEventListener('click', () => openMediaModal(btn.getAttribute('data-media'))); });
+    
+    // ALLIANCE MARQUEE - Load 14 logos from assets/logos/ as PNG (using ../ to go up one level)
+    const allianceContainer = document.getElementById('alliance-logo-container');
+    if (allianceContainer) {
+      // Clear the container first
+      allianceContainer.innerHTML = '';
+      
+      // Load 14 logos (1.png to 14.png) - using ../ to go up from /media/ folder to root
+      for (let i = 1; i <= 14; i++) {
+        const img = document.createElement('img');
+        img.src = `../assets/logos/${i}.png`;
+        img.alt = `Alliance Partner ${i}`;
+        img.className = 'alliance-logo-img';
+        img.onerror = function() {
+          this.style.display = 'none';
+          const fallbackSpan = document.createElement('span');
+          fallbackSpan.className = 'mx-6 font-mono-custom text-sm';
+          fallbackSpan.innerText = `Partner ${i}`;
+          this.parentNode?.insertBefore(fallbackSpan, this);
+        };
+        allianceContainer.appendChild(img);
+      }
+      
+      // Clone for seamless marquee effect
+      const cloneContainer = document.createElement('div');
+      cloneContainer.className = 'flex items-center';
+      for (let i = 1; i <= 14; i++) {
+        const imgClone = document.createElement('img');
+        imgClone.src = `../assets/logos/${i}.png`;
+        imgClone.alt = `Alliance Partner ${i}`;
+        imgClone.className = 'alliance-logo-img';
+        imgClone.onerror = function() {
+          this.style.display = 'none';
+          const fallbackSpan = document.createElement('span');
+          fallbackSpan.className = 'mx-6 font-mono-custom text-sm';
+          fallbackSpan.innerText = `Partner ${i}`;
+          this.parentNode?.insertBefore(fallbackSpan, this);
+        };
+        cloneContainer.appendChild(imgClone);
+      }
+      allianceContainer.appendChild(cloneContainer);
+    }
+    
+    document.getElementById('submitInquiryBtn')?.addEventListener('click',()=>{ const name=document.getElementById('inquiryName')?.value; const email=document.getElementById('inquiryEmail')?.value; if(!name||!email) alert('Please fill Name and Email.'); else alert(`Media inquiry from ${name}. We'll respond within 12h.`); });
+  </script>
+</body>
+</html>
