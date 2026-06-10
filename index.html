@@ -608,16 +608,14 @@
     modalOverlay?.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
     document.querySelectorAll('.view-media-case').forEach(btn => { btn.addEventListener('click', () => openMediaModal(btn.getAttribute('data-media'))); });
     
-    // ALLIANCE MARQUEE - Load 14 logos from assets/logos/ as PNG (using ../ to go up one level)
+    // ALLIANCE MARQUEE - Load 14 logos from assets/logos/
     const allianceContainer = document.getElementById('alliance-logo-container');
     if (allianceContainer) {
-      // Clear the container first
       allianceContainer.innerHTML = '';
       
-      // Load 14 logos (1.png to 14.png) - using ../ to go up from /media/ folder to root
       for (let i = 1; i <= 14; i++) {
         const img = document.createElement('img');
-        img.src = `../assets/logos/${i}.png`;
+        img.src = `assets/logos/${i}.png`;
         img.alt = `Alliance Partner ${i}`;
         img.className = 'alliance-logo-img';
         img.onerror = function() {
@@ -630,12 +628,11 @@
         allianceContainer.appendChild(img);
       }
       
-      // Clone for seamless marquee effect
       const cloneContainer = document.createElement('div');
       cloneContainer.className = 'flex items-center';
       for (let i = 1; i <= 14; i++) {
         const imgClone = document.createElement('img');
-        imgClone.src = `../assets/logos/${i}.png`;
+        imgClone.src = `assets/logos/${i}.png`;
         imgClone.alt = `Alliance Partner ${i}`;
         imgClone.className = 'alliance-logo-img';
         imgClone.onerror = function() {
@@ -651,6 +648,5 @@
     }
     
     document.getElementById('submitInquiryBtn')?.addEventListener('click',()=>{ const name=document.getElementById('inquiryName')?.value; const email=document.getElementById('inquiryEmail')?.value; if(!name||!email) alert('Please fill Name and Email.'); else alert(`Media inquiry from ${name}. We'll respond within 12h.`); });
-  </script>
-</body>
+  </script></body>
 </html>
